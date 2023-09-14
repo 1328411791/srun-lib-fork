@@ -1,5 +1,5 @@
 use getopts::{Matches, Options};
-use srun::{read_config_from_file, select_ip, SrunClient, User};
+use srun::{read_config_from_file,read_config_from_string, select_ip, SrunClient, User};
 use std::env;
 
 fn print_usage(opts: Option<&Options>) {
@@ -11,21 +11,6 @@ fn print_usage(opts: Option<&Options>) {
     }
 }
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        print_usage(None);
-        return;
-    }
-
-    match args[1].as_str() {
-        "login" => login_match(&args),
-        "logout" => logout_match(&args),
-        _ => {
-            print_usage(None);
-        }
-    }
-}
 
 fn login_match(args: &[String]) {
     let options = {
@@ -148,6 +133,8 @@ fn config_login(matches: Matches) {
         }
     }
 }
+
+
 
 fn single_login(matches: Matches) {
     let auth_server = match matches.opt_str("s") {

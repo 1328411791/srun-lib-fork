@@ -34,3 +34,8 @@ pub fn read_config_from_file<P: AsRef<Path>>(path: P) -> Result<Config, Box<dyn 
     let u = serde_json::from_reader(reader)?;
     Ok(u)
 }
+
+pub fn read_config_from_json(json:String) -> Result<Config, Box<dyn Error>> {
+    let u = serde_json::from_str(json.as_str())?;
+    Ok(u)
+}

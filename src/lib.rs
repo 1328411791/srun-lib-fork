@@ -25,6 +25,7 @@ use jni::{
     sys::{jint, jobject, jstring},
     JNIEnv,
 };
+use crate::file::read_config_from_json;
 
 #[no_mangle]
 pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_init(env: JNIEnv, _class: JClass) {
@@ -64,4 +65,50 @@ pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_config(
 
     println!("input: {}", config_struct.text1);
     println!("input: {}", config_struct.text2);
+}
+
+fn json_login(json: String) {
+    match read_config_from_json(json) {
+        Ok(config) => {
+            let config_i = config.clone();
+            let server = config
+                .server
+                .clone().unwrap();
+            for user in config_i {
+                println!("login user: {:#?}", user);
+                let mut client = SrunClient::new_from_user(&server, user)
+                    .set_detect_ip(config.detect_ip)
+                    .set_strict_bind(config.strict_bind)
+                    .set_double_stack(config.double_stack);
+                if let Some(n) = config.n {
+                    client.set_n(n);
+                }
+                if let Some(utype) = config.utype {
+                    client.set_type(utype);
+                }
+                if let Some(acid) = config.acid {
+                    client.set_acid(acid);
+                }
+                if let Some(ref os) = config.os {
+                    client.set_os(os);
+                }
+                if let Some(ref name) = config.name {
+                    client.set_name(name);
+                }
+                if let Some(retry_delay) = config.retry_delay {
+                    client.set_retry_delay(retry_delay);
+                }
+                if let Some(retry_times) = config.retry_times {
+                    client.set_retry_times(retry_times);
+                }
+
+                if let Err(e) = client.login() {
+                    println!("login error: {}", e);
+                }
+            }
+        }
+        Err(e) => {
+            println!("read config file error: {}", e);
+        }
+    }
 }
