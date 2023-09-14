@@ -20,11 +20,11 @@ mod http_client;
 
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
-use jni::objects::*;
-use jni::sys::{jint, jobject, jstring};
-use jni::JNIEnv;
-
-
+use jni::{
+    objects::*,
+    sys::{jint, jobject, jstring},
+    JNIEnv,
+};
 
 #[no_mangle]
 pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_init(env: JNIEnv, _class: JClass) {
@@ -32,17 +32,31 @@ pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_init(env: JNIEnv, _class: JC
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_config(mut env: JNIEnv, _class: JClass
-                                                           , config:JObject,text1:JString)->jobject {
+pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_config(
+    mut env: JNIEnv,
+    _class: JClass,
+    config: &JObject,
+    text1: JString,
+) {
     println!("Java_pers_metaworm_RustJNI_config");
 
     struct Config {
-        text1:String,
-        text2:String
+        text1: String,
+        text2: String,
     }
 
-    let text1_jstring: JString = env.get_field(config, "text1", "Ljava/lang/String;").unwrap().l().unwrap();
-    let text2_jstring: JString = env.get_field(config, "text2", "Ljava/lang/String;").unwrap().l().unwrap();
+    let text1_jstring: JString = env
+        .get_field(config, "text1", "Ljava/lang/String;")
+        .unwrap()
+        .l()
+        .unwrap()
+        .into();
+    let text2_jstring: JString = env
+        .get_field(config, "text2", "Ljava/lang/String;")
+        .unwrap()
+        .l()
+        .unwrap()
+        .into();
 
     let text1: String = env.get_string(&text1_jstring).unwrap().into();
     let text2: String = env.get_string(&text2_jstring).unwrap().into();
@@ -51,7 +65,4 @@ pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_config(mut env: JNIEnv, _cla
 
     println!("input: {}", config_struct.text1);
     println!("input: {}", config_struct.text2);
-
-
 }
-
