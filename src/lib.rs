@@ -35,8 +35,7 @@ pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_init(env: JNIEnv, _class: JC
 pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_config(
     mut env: JNIEnv,
     _class: JClass,
-    config: &JObject,
-    text1: JString,
+    config: JObject,
 ) {
     println!("Java_pers_metaworm_RustJNI_config");
 
@@ -46,13 +45,13 @@ pub unsafe extern "C" fn Java_pers_metaworm_RustJNI_config(
     }
 
     let text1_jstring: JString = env
-        .get_field(config, "text1", "Ljava/lang/String;")
+        .get_field(&config, "text1", "Ljava/lang/String;")
         .unwrap()
         .l()
         .unwrap()
         .into();
     let text2_jstring: JString = env
-        .get_field(config, "text2", "Ljava/lang/String;")
+        .get_field(&config, "text2", "Ljava/lang/String;")
         .unwrap()
         .l()
         .unwrap()
